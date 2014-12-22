@@ -14,14 +14,12 @@ STEPS:
 
 1.Add the following Message Formatters  and Message Builders  in ESB_HOME/repository/conf/axis2.xml file.
 
-Message Formatters:
-<messageFormatter contentType="application/octet-stream"
+Message Formatters:<messageFormatter contentType="application/octet-stream"
     class="org.wso2.carbon.relay.ExpandingMessageFormatter"/>
 <messageFormatter contentType="video/*"
     class="org.wso2.carbon.relay.ExpandingMessageFormatter"/>
 
-Message Builders:
-<messageBuilder contentType="video/*"
+Message Builders:<messageBuilder contentType="video/*"
     class="org.wso2.carbon.relay.BinaryRelayBuilder"/>
 <messageBuilder contentType="application/octet-stream"
     class="org.wso2.carbon.relay.BinaryRelayBuilder"/>
