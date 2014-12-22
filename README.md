@@ -15,8 +15,8 @@ STEPS:
 1.Add the following Message Formatters  and Message Builders  in ESB_HOME/repository/conf/axis2.xml file.
 
 Message Formatters:
-messageFormatter contentType="application/octet-stream"
-    class="org.wso2.carbon.relay.ExpandingMessageFormatter"
+\<messageFormatter contentType="application/octet-stream"
+    class="org.wso2.carbon.relay.ExpandingMessageFormatter"\/\>
 messageFormatter contentType="video/*"
     class="org.wso2.carbon.relay.ExpandingMessageFormatter"
 
