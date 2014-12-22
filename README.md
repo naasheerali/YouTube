@@ -1,14 +1,17 @@
 YouTube
 =======
 Product: Integration tests for WSO2 ESB YouTube connector Prerequisites:
+
     Maven 3.x
     Java 1.6 or above
 
 Tested Platform:
+
     ubuntu 14.o4
     WSO2 ESB 4.8.1
     
 STEPS:
+
 1.Add the following Message Formatters  and Message Builders  in ESB_HOME/repository/conf/axis2.xml file.
 
 Message Formatters:
