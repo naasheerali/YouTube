@@ -1,6 +1,0 @@
-{
-"apiUrl":"https://api.vimeo.com",
-"accessToken":"%s",
-"channel_id":"%s",
-"query":"%s"
-}
