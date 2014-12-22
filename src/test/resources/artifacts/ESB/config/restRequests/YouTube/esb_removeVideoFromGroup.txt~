@@ -1,6 +1,0 @@
-{
-"apiUrl":"https://api.vimeo.com",
-"accessToken":"%s",
-"group_id":"%s",
-"video_id":"%s"
-}
