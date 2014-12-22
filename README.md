@@ -18,13 +18,17 @@ Message Formatters:
 
 \<messageFormatter contentType="application/octet-stream"
     class="org.wso2.carbon.relay.ExpandingMessageFormatter"/\>
+    
 \<messageFormatter contentType="video/*"
     class="org.wso2.carbon.relay.ExpandingMessageFormatter"/\>
 
-Message Builders:<messageBuilder contentType="video/*"
-    class="org.wso2.carbon.relay.BinaryRelayBuilder"/>
-<messageBuilder contentType="application/octet-stream"
-    class="org.wso2.carbon.relay.BinaryRelayBuilder"/>
+Message Builders:
+
+\<messageBuilder contentType="video/*"
+    class="org.wso2.carbon.relay.BinaryRelayBuilder"/\>
+    
+\<messageBuilder contentType="application/octet-stream"
+    class="org.wso2.carbon.relay.BinaryRelayBuilder"/\>
 
 2.Make sure the EsB 4.8.1 zip file with latest patches at: "repository"
 
