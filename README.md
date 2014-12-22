@@ -11,7 +11,7 @@ Tested Platform:
     WSO2 ESB 4.8.1
 
 STEPS:
-1. Add the following Message Formatters  and Message Builders  in ESB_HOME/repository/conf/axis2.xml file.
+1.Add the following Message Formatters  and Message Builders  in ESB_HOME/repository/conf/axis2.xml file.
 
 Message Formatters:
 <messageFormatter contentType="application/octet-stream"
