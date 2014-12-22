@@ -17,10 +17,10 @@ STEPS:
 Message Formatters:
 
 \<messageFormatter contentType="application/octet-stream"
-    class="org.wso2.carbon.relay.ExpandingMessageFormatter"/\>
+class="org.wso2.carbon.relay.ExpandingMessageFormatter"/\>
     
 \<messageFormatter contentType="video/*"
-    class="org.wso2.carbon.relay.ExpandingMessageFormatter"/\>
+class="org.wso2.carbon.relay.ExpandingMessageFormatter"/\>
 
 Message Builders:
 
