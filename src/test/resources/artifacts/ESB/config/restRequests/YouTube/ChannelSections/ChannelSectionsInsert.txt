@@ -1,0 +1,14 @@
+{
+"apiUrl":"%s",
+"client_id":"%s",
+"client_secret":"%s",
+"grant_type":"%s",
+"refresh_token":"%s",
+"part":"%s",
+"snippettype":"%s",
+"snippetstyle":"%s",
+"snippettitle":"%s",
+"snippetposition":"%s",
+"contentDetailsplaylists":"%s",
+"contentDetailschannels":"%s"
+}

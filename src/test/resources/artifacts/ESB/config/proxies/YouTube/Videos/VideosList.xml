@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy xmlns="http://ws.apache.org/ns/synapse"
+       name="VideosList"
+       transports="https,http"
+       statistics="disable"
+       trace="disable"
+       startOnLoad="true">
+    <target>
+        <inSequence>
+            <property name="apiUrl" expression="json-eval($.apiUrl)"/>
+            <property name="client_id" expression="json-eval($.client_id)"/>
+            <property name="client_secret" expression="json-eval($.client_secret)"/>
+            <property name="grant_type" expression="json-eval($.grant_type)"/>
+            <property name="refresh_token" expression="json-eval($.refresh_token)"/>
+            <property name="part" expression="json-eval($.part)"/>
+            <property name="chart" expression="json-eval($.chart)"/>
+            <property name="id" expression="json-eval($.id)"/>
+            <property name="myRating" expression="json-eval($.myRating)"/>
+            <property name="maxResults" expression="json-eval($.maxResults)"/>
+            <property name="onBehalfOfContentOwner"
+                      expression="json-eval($.onBehalfOfContentOwner)"/>
+            <property name="pageToken" expression="json-eval($.pageToken)"/>
+            <property name="regionCode" expression="json-eval($.regionCode)"/>
+            <property name="videoCategoryId" expression="json-eval($.videoCategoryId)"/>
+            <property name="fields" expression="json-eval($.fields)"/>
+            <YouTube.init>
+                <apiUrl>{$ctx:apiUrl}</apiUrl>
+            </YouTube.init>
+            <YouTube.getAccessTokenFromRefreshToken>
+                <client_id>{$ctx:client_id}</client_id>
+                <client_secret>{$ctx:client_secret}</client_secret>
+                <grant_type>{$ctx:grant_type}</grant_type>
+                <refresh_token>{$ctx:refresh_token}</refresh_token>
+            </YouTube.getAccessTokenFromRefreshToken>
+            <YouTube.VideosList>
+                <part>{$ctx:part}</part>
+                <chart>{$ctx:chart}</chart>
+                <id>{$ctx:id}</id>
+                <myRating>{$ctx:myRating}</myRating>
+                <maxResults>{$ctx:maxResults}</maxResults>
+                <onBehalfOfContentOwner>{$ctx:onBehalfOfContentOwner}</onBehalfOfContentOwner>
+                <pageToken>{$ctx:pageToken}</pageToken>
+                <regionCode>{$ctx:regionCode}</regionCode>
+                <videoCategoryId>{$ctx:videoCategoryId}</videoCategoryId>
+                <fields>{$ctx:fields}</fields>
+            </YouTube.VideosList>
+            <respond/>
+        </inSequence>
+        <outSequence>
+            <send/>
+        </outSequence>
+    </target>
+    <description/>
+</proxy>

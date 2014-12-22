@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template name="init" xmlns="http://ws.apache.org/ns/synapse">
+    <parameter description="URL of the YouTube API" name="apiUrl"/>
+    <parameter description="Access token for access backend services" name="accessToken"/>
+    <sequence>
+        <property expression="$func:accessToken" name="uri.var.YouTube.accessToken" scope="default" type="STRING"/>
+        <property name="uri.var.YouTube.apiUrl" expression="$func:uri" scope="default" type="STRING"/>
+
+        
+    </sequence>
+</template>

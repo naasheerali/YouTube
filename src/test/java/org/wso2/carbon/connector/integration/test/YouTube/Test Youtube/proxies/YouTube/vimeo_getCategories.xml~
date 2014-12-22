@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy xmlns="http://ws.apache.org/ns/synapse"
+       name="vimeo_getCategories"
+       transports="https,http"
+       statistics="disable"
+       trace="disable"
+       startOnLoad="true">
+    <target>
+        <inSequence>
+            <property name="apiUrl" expression="json-eval($.apiUrl)"/>
+            <property name="accessToken" expression="json-eval($.accessToken)"/>
+		<property name="page" expression="json-eval($.page)"/>
+		<property name="per_page" expression="json-eval($.per_page)"/>
+            <vimeo.init>
+                <apiUrl>{$ctx:apiUrl}</apiUrl>
+                <accessToken>{$ctx:accessToken}</accessToken>
+            </vimeo.init>
+            <vimeo.getCategories>
+		<page>{$ctx:page}</page>
+		<per_page>{$ctx:per_page}</per_page>
+         </vimeo.getCategories>
+            <respond/>
+        </inSequence>
+        <outSequence>
+            <log/>
+            <send/>
+        </outSequence>
+    </target>
+    <description/>
+</proxy>

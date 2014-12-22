@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy xmlns="http://ws.apache.org/ns/synapse"
+       name="ChannelsList"
+       transports="https,http"
+       statistics="disable"
+       trace="disable"
+       startOnLoad="true">
+    <target>
+        <inSequence>
+            <property name="apiUrl" expression="json-eval($.apiUrl)"/>
+            <property name="client_id" expression="json-eval($.client_id)"/>
+            <property name="client_secret" expression="json-eval($.client_secret)"/>
+            <property name="grant_type" expression="json-eval($.grant_type)"/>
+            <property name="refresh_token" expression="json-eval($.refresh_token)"/>
+            <property name="part" expression="json-eval($.part)"/>
+            <property name="categoryId" expression="json-eval($.categoryId)"/>
+            <property name="forUsername" expression="json-eval($.forUsername)"/>
+            <property name="id" expression="json-eval($.id)"/>
+            <property name="managedByMe" expression="json-eval($.managedByMe)"/>
+            <property name="mine" expression="json-eval($.mine)"/>
+            <property name="mySubscribers" expression="json-eval($.mySubscribers)"/>
+            <property name="maxResults" expression="json-eval($.maxResults)"/>
+            <property name="onBehalfOfContentOwner"
+                      expression="json-eval($.onBehalfOfContentOwner)"/>
+            <property name="pageToken" expression="json-eval($.pageToken)"/>
+            <property name="fields" expression="json-eval($.fields)"/>
+            <YouTube.init>
+                <apiUrl>{$ctx:apiUrl}</apiUrl>
+            </YouTube.init>
+            <YouTube.getAccessTokenFromRefreshToken>
+                <client_id>{$ctx:client_id}</client_id>
+                <client_secret>{$ctx:client_secret}</client_secret>
+                <grant_type>{$ctx:grant_type}</grant_type>
+                <refresh_token>{$ctx:refresh_token}</refresh_token>
+            </YouTube.getAccessTokenFromRefreshToken>
+            <YouTube.ChannelsList>
+                <part>{$ctx:part}</part>
+                <categoryId>{$ctx:categoryId}</categoryId>
+                <forUsername>{$ctx:forUsername}</forUsername>
+                <id>{$ctx:id}</id>
+                <managedByMe>{$ctx:managedByMe}</managedByMe>
+                <mine>{$ctx:mine}</mine>
+                <mySubscribers>{$ctx:mySubscribers}</mySubscribers>
+                <maxResults>{$ctx:maxResults}</maxResults>
+                <onBehalfOfContentOwner>{$ctx:onBehalfOfContentOwner}</onBehalfOfContentOwner>
+                <pageToken>{$ctx:pageToken}</pageToken>
+            </YouTube.ChannelsList>
+            <respond/>
+        </inSequence>
+        <outSequence>
+            <send/>
+        </outSequence>
+    </target>
+    <description/>
+</proxy>

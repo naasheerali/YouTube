@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+~  Licensed to the Apache Software Foundation (ASF) under one
+~  or more contributor license agreements.  See the NOTICE file
+~  distributed with this work for additional information
+~  regarding copyright ownership.  The ASF licenses this file
+~  to you under the Apache License, Version 2.0 (the
+~  "License"); you may not use this file except in compliance
+~  with the License.  You may obtain a copy of the License at
+~
+~   http://www.apache.org/licenses/LICENSE-2.0
+~
+~  Unless required by applicable law or agreed to in writing,
+~  software distributed under the License is distributed on an
+~   * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~  KIND, either express or implied.  See the License for the
+~  specific language governing permissions and limitations
+~  under the License.
+-->
+<template name="PlaylistItemsUpdate" xmlns="http://ws.apache.org/ns/synapse">
+    <parameter name="part"
+               description="list of one or more activity resource properties that the API response will include."/>
+
+    <parameter name="fields" description="specifying which fields to include in a partial response."/>
+
+    <parameter name="optionalParameters"
+               description="Concatination of optional parameters"/>
+
+    <parameter name="id"/>
+    <parameter name="playlistId"/>
+    <parameter name="kind"/>
+    <parameter name="videoId"/>
+    <parameter name="position"/>
+    <parameter name="note"/>
+    <parameter name="startAt"/>
+    <parameter name="endAt"/>
+
+    <sequence>
+
+        <property name="uri.var.part" expression="$func:part"/>
+
+        <property name="uri.var.fields" expression="$func:fields"/>
+
+        <property name="parameters" value=""/>
+
+        <property name="uri.var.id" expression="$func:id"/>
+        <property name="uri.var.playlistId" expression="$func:playlistId"/>
+        <property name="uri.var.kind" expression="$func:kind"/>
+        <property name="uri.var.videoId" expression="$func:videoId"/>
+        <property name="uri.var.position" expression="$func:position"/>
+        <property name="uri.var.note" expression="$func:note"/>
+        <property name="uri.var.startAt" expression="$func:startAt"/>
+        <property name="uri.var.endAt" expression="$func:endAt"/>
+
+        <payloadFactory media-type="json">
+            <format>
+                {
+                "id":"$1",
+                "snippet":
+                {
+                "playlistId":"$2",
+                "resourceId":
+                {
+                "kind":"$3",
+                "videoId":"$4"
+                },
+                "position":"$5"
+                },
+                "contentDetails":
+                {
+                "note":"$6",
+                "startAt":"$7",
+                "endAt":"$8"
+                }
+                }
+            </format>
+            <args>
+                <arg expression="get-property('uri.var.id')"/>
+                <arg expression="get-property('uri.var.playlistId')"/>
+                <arg expression="get-property('uri.var.kind')"/>
+                <arg expression="get-property('uri.var.videoId')"/>
+                <arg expression="get-property('uri.var.position')"/>
+                <arg expression="get-property('uri.var.note')"/>
+                <arg expression="get-property('uri.var.startAt')"/>
+                <arg expression="get-property('uri.var.endAt')"/>
+            </args>
+        </payloadFactory>
+        <filter
+                xpath="get-property('uri.var.position') = '' or (not(string(get-property('uri.var.position'))))">
+            <then>
+                <script language="js"><![CDATA[
+					    var payload = mc.getPayloadJSON();
+                        delete payload.snippet.position;
+						mc.setPayloadJSON(payload);
+					]]>
+                </script>
+            </then>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.note') = '' or (not(string(get-property('uri.var.note'))))">
+            <then>
+                <script language="js"><![CDATA[
+					    var payload = mc.getPayloadJSON();
+						delete payload.contentDetails.note;
+						mc.setPayloadJSON(payload);
+					]]>
+                </script>
+            </then>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.startAt') = '' or (not(string(get-property('uri.var.startAt'))))">
+            <then>
+                <script language="js"><![CDATA[
+					    var payload = mc.getPayloadJSON();
+						delete payload.contentDetails.startAt;
+						mc.setPayloadJSON(payload);
+					]]>
+                </script>
+            </then>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.endAt') = '' or (not(string(get-property('uri.var.endAt'))))">
+            <then>
+                <script language="js"><![CDATA[
+					    var payload = mc.getPayloadJSON();
+						delete payload.contentDetails.endAt;
+						mc.setPayloadJSON(payload);
+					]]>
+                </script>
+            </then>
+        </filter>
+        <script language="js"><![CDATA[
+            var payload = mc.getPayloadJSON();
+            var contentDetails = payload.contentDetails;
+            var count=(count_obj(contentDetails))
+            function count_obj(str){
+                var i = 0;
+                for(var key in str){
+                    ++i;
+                }
+                return i;
+            }
+            if(count == 0)
+            {
+                delete payload.contentDetails;
+                mc.setPayloadJSON(payload);
+            }
+			]]>
+        </script>
+        <filter
+                xpath="get-property('uri.var.fields') = '' or  not(string(get-property('uri.var.fields')))">
+            <then>
+                <property name="uri.var.fields" value=""/>
+            </then>
+            <else>
+                <property name="parameters" expression="fn:concat(get-property('parameters'),
+                '&amp;fields=', get-property('uri.var.fields'))"/>
+            </else>
+        </filter>
+
+        <property name="uri.var.optionalParameters" expression="get-property('parameters')"/>
+
+        <call>
+            <endpoint>
+                <http method="PUT"
+                      uri-template="{uri.var.apiUrl}/playlistItems?part={uri.var.part}{uri.var.optionalParameters}"/>
+            </endpoint>
+        </call>
+
+    </sequence>
+</template>

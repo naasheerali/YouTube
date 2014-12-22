@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template xmlns="http://ws.apache.org/ns/synapse" name="getCategories">
+
+	<parameter name="page" description="number of the page" />
+    	<parameter name="per_page" description="number of categories in the page" />
+
+	<parameter name="optionalParameters"
+              description="Concatination of optional parameters" />
+
+
+    <sequence>
+        <property name="HTTP_METHOD" value="GET" scope="axis2" type="STRING"/>
+        <property name="Accept-Encoding" scope="transport" action="remove"/>
+        <property name="messageType" value="application/json" scope="axis2" type="STRING"/>
+
+	<property name="uri.var.page" expression="$func:page" />
+        <property name="uri.var.per_page" expression="$func:per_page" />
+
+	<property name="parameters" value=""/>
+
+
+	<filter
+                xpath="get-property('uri.var.page') = '' or  not(string(get-property('uri.var.page')))" >
+            <then>
+                <property name="uri.var.page" value=""/>
+            </then>
+            <else>
+                <property name="parameters" expression="fn:concat(get-property('parameters'),
+                '&amp;page=', get-property('uri.var.page'))"/>
+            </else>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.per_page') = '' or  not(string(get-property('uri.var.per_page')))" >
+            <then>
+                <property name="uri.var.per_page" value=""/>
+            </then>
+            <else>
+                <property name="parameters" expression="fn:concat(get-property('parameters'),
+                '&amp;per_page=', get-property('uri.var.per_page'))"/>
+            </else>
+        </filter>
+	<property name="uri.var.optionalParameters" expression="get-property('parameters')" />
+
+        <payloadFactory media-type="xml">
+            <format>
+                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+                    <soapenv:Header/>
+                    <soapenv:Body/>
+                </soapenv:Envelope>
+            </format>
+            <args/>
+        </payloadFactory>
+        <property name="messageType" value="application/json" scope="axis2" />
+        <call>
+            <endpoint>
+                <http method="GET"
+                      uri-template="{uri.var.YouTube.apiUrl}/channels?part=id&amp;mine=true&amp;access_token={uri.var.YouTube.accessToken}" />
+            </endpoint>
+        </call>                       
+    </sequence>
+</template>
+
+
+
+
+

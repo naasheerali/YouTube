@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+~  Licensed to the Apache Software Foundation (ASF) under one
+~  or more contributor license agreements.  See the NOTICE file
+~  distributed with this work for additional information
+~  regarding copyright ownership.  The ASF licenses this file
+~  to you under the Apache License, Version 2.0 (the
+~  "License"); you may not use this file except in compliance
+~  with the License.  You may obtain a copy of the License at
+~
+~   http://www.apache.org/licenses/LICENSE-2.0
+~
+~  Unless required by applicable law or agreed to in writing,
+~  software distributed under the License is distributed on an
+~   * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~  KIND, either express or implied.  See the License for the
+~  specific language governing permissions and limitations
+~  under the License.
+-->
+<template name="VideosList" xmlns="http://ws.apache.org/ns/synapse">
+    <parameter name="part"/>
+
+    <parameter name="chart"/>
+    <parameter name="id"/>
+    <parameter name="myRating"/>
+
+    <parameter name="filter"/>
+
+    <parameter name="maxResults"/>
+    <parameter name="onBehalfOfContentOwner"/>
+    <parameter name="pageToken"/>
+    <parameter name="regionCode"/>
+    <parameter name="videoCategoryId"/>
+    <parameter name="fields"/>
+
+    <parameter name="optionalParameters"/>
+
+    <sequence>
+        <property name="uri.var.part" expression="$func:part"/>
+
+        <property name="uri.var.chart" expression="$func:chart"/>
+        <property name="uri.var.id" expression="$func:id"/>
+        <property name="uri.var.myRating" expression="$func:myRating"/>
+
+        <property name="filters" value=""/>
+
+        <property name="uri.var.maxResults" expression="$func:maxResults"/>
+        <property name="uri.var.onBehalfOfContentOwner" expression="$func:onBehalfOfContentOwner"/>
+        <property name="uri.var.pageToken" expression="$func:pageToken"/>
+        <property name="uri.var.regionCode" expression="$func:regionCode"/>
+        <property name="uri.var.videoCategoryId" expression="$func:videoCategoryId"/>
+        <property name="uri.var.fields" expression="$func:fields"/>
+
+        <property name="parameters" value=""/>
+
+        <filter
+                xpath="get-property('uri.var.chart') = '' or  not(string(get-property('uri.var.chart')))">
+            <then>
+                <property name="uri.var.chart" value=""/>
+            </then>
+            <else>
+                <property name="filters" expression="fn:concat(get-property('filters'),
+                '&amp;chart=', get-property('uri.var.chart'))"/>
+            </else>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.id') = '' or  not(string(get-property('uri.var.id')))">
+            <then>
+                <property name="uri.var.id" value=""/>
+            </then>
+            <else>
+                <property name="filters" expression="fn:concat(get-property('filters'),
+                '&amp;id=', get-property('uri.var.id'))"/>
+            </else>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.myRating') = '' or  not(string(get-property('uri.var.myRating')))">
+            <then>
+                <property name="uri.var.myRating" value=""/>
+            </then>
+            <else>
+                <property name="filters" expression="fn:concat(get-property('filters'),
+                '&amp;myRating=', get-property('uri.var.myRating'))"/>
+            </else>
+        </filter>
+
+        <property name="uri.var.filter" expression="get-property('filters')"/>
+
+        <filter
+                xpath="get-property('uri.var.maxResults') = '' or  not(string(get-property('uri.var.maxResults')))">
+            <then>
+                <property name="uri.var.maxResults" value=""/>
+            </then>
+            <else>
+                <property name="parameters" expression="fn:concat(get-property('parameters'),
+                '&amp;maxResults=', get-property('uri.var.maxResults'))"/>
+            </else>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.onBehalfOfContentOwner') = '' or  not(string(get-property('uri.var.onBehalfOfContentOwner')))">
+            <then>
+                <property name="uri.var.onBehalfOfContentOwner" value=""/>
+            </then>
+            <else>
+                <property name="parameters" expression="fn:concat(get-property('parameters'),
+                '&amp;onBehalfOfContentOwner=', get-property('uri.var.onBehalfOfContentOwner'))"/>
+            </else>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.pageToken') = '' or  not(string(get-property('uri.var.pageToken')))">
+            <then>
+                <property name="uri.var.pageToken" value=""/>
+            </then>
+            <else>
+                <property name="parameters" expression="fn:concat(get-property('parameters'),
+                '&amp;pageToken=', get-property('uri.var.pageToken'))"/>
+            </else>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.regionCode') = '' or  not(string(get-property('uri.var.regionCode')))">
+            <then>
+                <property name="uri.var.regionCode" value=""/>
+            </then>
+            <else>
+                <property name="parameters" expression="fn:concat(get-property('parameters'),
+                '&amp;regionCode=', get-property('uri.var.regionCode'))"/>
+            </else>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.videoCategoryId') = '' or  not(string(get-property('uri.var.videoCategoryId')))">
+            <then>
+                <property name="uri.var.videoCategoryId" value=""/>
+            </then>
+            <else>
+                <property name="parameters" expression="fn:concat(get-property('parameters'),
+                '&amp;videoCategoryId=', get-property('uri.var.videoCategoryId'))"/>
+            </else>
+        </filter>
+
+        <filter
+                xpath="get-property('uri.var.fields') = '' or  not(string(get-property('uri.var.fields')))">
+            <then>
+                <property name="uri.var.fields" value=""/>
+            </then>
+            <else>
+                <property name="parameters" expression="fn:concat(get-property('parameters'),
+                '&amp;fields=', get-property('uri.var.fields'))"/>
+            </else>
+        </filter>
+
+        <property name="uri.var.optionalParameters" expression="get-property('parameters')"/>
+
+        <call>
+            <endpoint>
+                <http method="GET"
+                      uri-template="{uri.var.apiUrl}/videos?part={uri.var.part}{uri.var.filter}{uri.var.optionalParameters}"/>
+            </endpoint>
+        </call>
+    </sequence>
+</template>

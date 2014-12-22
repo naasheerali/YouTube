@@ -1,0 +1,7 @@
+{
+"apiUrl":"https://api.vimeo.com",
+"accessToken":"%s",
+"video_id":"%s",
+"comment_id":"%s",
+"page":"%s"
+}

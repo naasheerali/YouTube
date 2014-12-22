@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy xmlns="http://ws.apache.org/ns/synapse"
+       name="vimeo_removeVideoFromGroup"
+       transports="https,http"
+       statistics="disable"
+       trace="disable"
+       startOnLoad="true">
+    <target>
+        <inSequence>
+            <property name="apiUrl" expression="json-eval($.apiUrl)"/>
+            <property name="accessToken" expression="json-eval($.accessToken)"/>
+		<property name="group_id" expression="json-eval($.group_id)"/>
+		<property name="video_id" expression="json-eval($.video_id)"/>
+            <vimeo.init>
+                <apiUrl>{$ctx:apiUrl}</apiUrl>
+                <accessToken>{$ctx:accessToken}</accessToken>
+            </vimeo.init>
+
+            <vimeo.removeVideoFromGroup>
+		<group_id>{$ctx:group_id}</group_id>
+		<video_id>{$ctx:video_id}</video_id>
+         </vimeo.removeVideoFromGroup>
+		 
+            <respond/>
+        </inSequence>
+        <outSequence>
+            <log/>
+            <send/>
+        </outSequence>
+    </target>
+    <description/>
+</proxy>

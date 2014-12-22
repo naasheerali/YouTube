@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy xmlns="http://ws.apache.org/ns/synapse"
+       name="vimeo_getUsersRelatedToChannel"
+       transports="https,http"
+       statistics="disable"
+       trace="disable"
+       startOnLoad="true">
+    <target>
+        <inSequence>
+            <property name="apiUrl" expression="json-eval($.apiUrl)"/>
+            <property name="accessToken" expression="json-eval($.accessToken)"/>
+		<property name="channel_id" expression="json-eval($.channel_id)"/>
+		<property name="page" expression="json-eval($.page)"/>
+		<property name="per_page" expression="json-eval($.per_page)"/>
+            	<property name="query" expression="json-eval($.query)"/>
+		<property name="sort" expression="json-eval($.sort)"/>
+		<property name="direction" expression="json-eval($.direction)"/>
+		<property name="filter" expression="json-eval($.filter)"/>
+            <vimeo.init>
+                <apiUrl>{$ctx:apiUrl}</apiUrl>
+                <accessToken>{$ctx:accessToken}</accessToken>
+            </vimeo.init>
+
+            <vimeo.getUsersRelatedToChannel>
+		<channel_id>{$ctx:channel_id}</channel_id>
+		<page>{$ctx:page}</page>
+		<per_page>{$ctx:per_page}</per_page>
+		<query>{$ctx:query}</query>
+		<sort>{$ctx:sort}</sort>
+		<direction>{$ctx:direction}</direction>
+		<filter>{$ctx:filter}</filter>
+         </vimeo.getUsersRelatedToChannel>
+		 
+            <respond/>
+        </inSequence>
+        <outSequence>
+            <log/>
+            <send/>
+        </outSequence>
+    </target>
+    <description/>
+</proxy>

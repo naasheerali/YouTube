@@ -1,0 +1,6 @@
+{
+"apiUrl":"https://api.vimeo.com",
+"accessToken":"%s",
+"video_id":"%s",
+"sort":"%s"
+}

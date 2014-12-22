@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+~  Licensed to the Apache Software Foundation (ASF) under one
+~  or more contributor license agreements.  See the NOTICE file
+~  distributed with this work for additional information
+~  regarding copyright ownership.  The ASF licenses this file
+~  to you under the Apache License, Version 2.0 (the
+~  "License"); you may not use this file except in compliance
+~  with the License.  You may obtain a copy of the License at
+~
+~   http://www.apache.org/licenses/LICENSE-2.0
+~
+~  Unless required by applicable law or agreed to in writing,
+~  software distributed under the License is distributed on an
+~   * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~  KIND, either express or implied.  See the License for the
+~  specific language governing permissions and limitations
+~  under the License.
+-->
+<template name="VideosUpdate" xmlns="http://ws.apache.org/ns/synapse">
+    <parameter name="part"
+               description="list of one or more activity resource properties that the API response will include."/>
+
+    <parameter name="onBehalfOfContentOwner"
+               description="This parameter is intended exclusively for YouTube content partners."/>
+    <parameter name="fields" description="specifying which fields to include in a partial response."/>
+
+    <parameter name="optionalParameters"
+               description="Concatination of optional parameters"/>
+
+    <parameter name="id"/>
+    <parameter name="title"/>
+    <parameter name="description"/>
+    <parameter name="tags"/>
+    <parameter name="categoryId"/>
+    <parameter name="privacyStatus"/>
+    <parameter name="embeddable"/>
+    <parameter name="license"/>
+    <parameter name="publicStatsViewable"/>
+    <parameter name="publishAt"/>
+    <parameter name="locationDescription"/>
+    <parameter name="latitude"/>
+    <parameter name="longitude"/>
+    <parameter name="recordingDate"/>
+
+    <sequence>
+
+        <property name="uri.var.part" expression="$func:part"/>
+
+        <property name="uri.var.onBehalfOfContentOwner" expression="$func:onBehalfOfContentOwner"/>
+
+        <property name="uri.var.fields" expression="$func:fields"/>
+
+        <property name="parameters" value=""/>
+
+        <property name="uri.var.id" expression="$func:id"/>
+        <property name="uri.var.title" expression="$func:title"/>
+        <property name="uri.var.description" expression="$func:description"/>
+        <property name="uri.var.tags" expression="$func:tags"/>
+        <property name="uri.var.categoryId" expression="$func:categoryId"/>
+        <property name="uri.var.privacyStatus" expression="$func:privacyStatus"/>
+        <property name="uri.var.embeddable" expression="$func:embeddable"/>
+        <property name="uri.var.license" expression="$func:license"/>
+        <property name="uri.var.publicStatsViewable" expression="$func:publicStatsViewable"/>
+        <property name="uri.var.publishAt" expression="$func:publishAt"/>
+        <property name="uri.var.locationDescription" expression="$func:locationDescription"/>
+        <property name="uri.var.latitude" expression="$func:latitude"/>
+        <property name="uri.var.longitude" expression="$func:longitude"/>
+        <property name="uri.var.recordingDate" expression="$func:recordingDate"/>
+
+        <payloadFactory media-type="json">
+            <format>
+                {
+                "snippet":
+                {
+                "title":"$1",
+                "description":"$2",
+                "tags":
+                [
+                "$3"
+                ],
+                "categoryId":"$4"
+                },
+                "status":
+                {
+                "privacyStatus":"$5",
+                "embeddable":"$6",
+                "license":"$7",
+                "publicStatsViewable":"$8",
+                "publishAt":"$9"
+                },
+                "recordingDetails":
+                {
+                "locationDescription":"$10",
+                "location":
+                {
+                "latitude":"$11",
+                "longitude":"$12"
+                },
+                "recordingDate":"$13"
+                },
+                "id":"$14"
+                }
+            </format>
+            <args>
+                <arg expression="get-property('uri.var.title')"/>
+                <arg expression="get-property('uri.var.description')"/>
+                <arg expression="get-property('uri.var.tags')"/>
+                <arg expression="get-property('uri.var.categoryId')"/>
+                <arg expression="get-property('uri.var.privacyStatus')"/>
+                <arg expression="get-property('uri.var.embeddable')"/>
+                <arg expression="get-property('uri.var.license')"/>
+                <arg expression="get-property('uri.var.publicStatsViewable')"/>
+                <arg expression="get-property('uri.var.publishAt')"/>
+                <arg expression="get-property('uri.var.locationDescription')"/>
+                <arg expression="get-property('uri.var.latitude')"/>
+                <arg expression="get-property('uri.var.longitude')"/>
+                <arg expression="get-property('uri.var.recordingDate')"/>
+                <arg expression="get-property('uri.var.id')"/>
+            </args>
+        </payloadFactory>
+
+        <filter
+                xpath="get-property('uri.var.autoLevels') = '' or  not(string(get-property('uri.var.autoLevels')))">
+            <then>
+                <property name="uri.var.autoLevels" value=""/>
+            </then>
+            <else>
+                <property name="parameters" expression="fn:concat(get-property('parameters'),
+                '&amp;autoLevels=', get-property('uri.var.autoLevels'))"/>
+            </else>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.notifySubscribers') = '' or  not(string(get-property('uri.var.notifySubscribers')))">
+            <then>
+                <property name="uri.var.notifySubscribers" value=""/>
+            </then>
+            <else>
+                <property name="parameters" expression="fn:concat(get-property('parameters'),
+                '&amp;notifySubscribers=', get-property('uri.var.notifySubscribers'))"/>
+            </else>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.onBehalfOfContentOwner') = '' or  not(string(get-property('uri.var.onBehalfOfContentOwner')))">
+            <then>
+                <property name="uri.var.onBehalfOfContentOwner" value=""/>
+            </then>
+            <else>
+                <property name="parameters" expression="fn:concat(get-property('parameters'),
+                '&amp;onBehalfOfContentOwner=', get-property('uri.var.onBehalfOfContentOwner'))"/>
+            </else>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.onBehalfOfContentOwnerChannel') = '' or  not(string(get-property('uri.var.onBehalfOfContentOwnerChannel')))">
+            <then>
+                <property name="uri.var.onBehalfOfContentOwnerChannel" value=""/>
+            </then>
+            <else>
+                <property name="parameters" expression="fn:concat(get-property('parameters'),
+                '&amp;onBehalfOfContentOwnerChannel=', get-property('uri.var.onBehalfOfContentOwnerChannel'))"/>
+            </else>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.stabilize') = '' or  not(string(get-property('uri.var.stabilize')))">
+            <then>
+                <property name="uri.var.stabilize" value=""/>
+            </then>
+            <else>
+                <property name="parameters" expression="fn:concat(get-property('parameters'),
+                '&amp;stabilize=', get-property('uri.var.stabilize'))"/>
+            </else>
+        </filter>
+
+        <filter
+                xpath="get-property('uri.var.fields') = '' or  not(string(get-property('uri.var.fields')))">
+            <then>
+                <property name="uri.var.fields" value=""/>
+            </then>
+            <else>
+                <property name="parameters" expression="fn:concat(get-property('parameters'),
+                '&amp;fields=', get-property('uri.var.fields'))"/>
+            </else>
+        </filter>
+
+        <property name="uri.var.optionalParameters" expression="get-property('parameters')"/>
+
+        <filter
+                xpath="get-property('uri.var.title') = '' or (not(string(get-property('uri.var.title'))))">
+            <then>
+                <script language="js"><![CDATA[
+					    var payload = mc.getPayloadJSON();
+                        delete payload.snippet.title;
+						mc.setPayloadJSON(payload);
+					]]>
+                </script>
+            </then>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.description') = '' or (not(string(get-property('uri.var.description'))))">
+            <then>
+                <script language="js"><![CDATA[
+					    var payload = mc.getPayloadJSON();
+                        delete payload.snippet.description;
+						mc.setPayloadJSON(payload);
+					]]>
+                </script>
+            </then>
+        </filter>
+        <script language="js"><![CDATA[
+            var payload = mc.getPayloadJSON();
+            var tags = payload.snippet.tags[0];
+            var count=(count_obj(tags))
+            function count_obj(pos){
+                var i = 0;
+                for(var key in pos){
+                    ++i;
+                }
+                return i;
+            }
+            if(count == 0)
+            {
+                delete payload.snippet.tags;
+                mc.setPayloadJSON(payload);
+            }
+			]]>
+        </script>
+        <filter
+                xpath="get-property('uri.var.categoryId') = '' or (not(string(get-property('uri.var.categoryId'))))">
+            <then>
+                <script language="js"><![CDATA[
+					    var payload = mc.getPayloadJSON();
+                        delete payload.snippet.categoryId;
+						mc.setPayloadJSON(payload);
+					]]>
+                </script>
+            </then>
+        </filter>
+        <script language="js"><![CDATA[
+            var payload = mc.getPayloadJSON();
+            var snippet = payload.snippet;
+            var count=(count_obj(snippet))
+            function count_obj(str){
+                var i = 0;
+                for(var key in str){
+                    ++i;
+                }
+                return i;
+            }
+            if(count == 0)
+            {
+                delete payload.snippet;
+                mc.setPayloadJSON(payload);
+            }
+			]]>
+        </script>
+        <filter
+                xpath="get-property('uri.var.privacyStatus') = '' or (not(string(get-property('uri.var.privacyStatus'))))">
+            <then>
+                <script language="js"><![CDATA[
+					    var payload = mc.getPayloadJSON();
+                        delete payload.status.privacyStatus;
+						mc.setPayloadJSON(payload);
+					]]>
+                </script>
+            </then>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.embeddable') = '' or (not(string(get-property('uri.var.embeddable'))))">
+            <then>
+                <script language="js"><![CDATA[
+					    var payload = mc.getPayloadJSON();
+                        delete payload.status.embeddable;
+						mc.setPayloadJSON(payload);
+					]]>
+                </script>
+            </then>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.license') = '' or (not(string(get-property('uri.var.license'))))">
+            <then>
+                <script language="js"><![CDATA[
+					    var payload = mc.getPayloadJSON();
+                        delete payload.status.license;
+						mc.setPayloadJSON(payload);
+					]]>
+                </script>
+            </then>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.publicStatsViewable') = '' or (not(string(get-property('uri.var.publicStatsViewable'))))">
+            <then>
+                <script language="js"><![CDATA[
+					    var payload = mc.getPayloadJSON();
+                        delete payload.status.publicStatsViewable;
+						mc.setPayloadJSON(payload);
+					]]>
+                </script>
+            </then>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.publishAt') = '' or (not(string(get-property('uri.var.publishAt'))))">
+            <then>
+                <script language="js"><![CDATA[
+					    var payload = mc.getPayloadJSON();
+                        delete payload.status.publishAt;
+						mc.setPayloadJSON(payload);
+					]]>
+                </script>
+            </then>
+        </filter>
+        <script language="js"><![CDATA[
+            var payload = mc.getPayloadJSON();
+            var status = payload.status;
+            var count=(count_obj(status))
+            function count_obj(str){
+                var i = 0;
+                for(var key in str){
+                    ++i;
+                }
+                return i;
+            }
+            if(count == 0)
+            {
+                delete payload.status;
+                mc.setPayloadJSON(payload);
+            }
+			]]>
+        </script>
+        <filter
+                xpath="get-property('uri.var.locationDescription') = '' or (not(string(get-property('uri.var.locationDescription'))))">
+            <then>
+                <script language="js"><![CDATA[
+					    var payload = mc.getPayloadJSON();
+                        delete payload.recordingDetails.locationDescription;
+						mc.setPayloadJSON(payload);
+					]]>
+                </script>
+            </then>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.latitude') = '' or (not(string(get-property('uri.var.latitude'))))">
+            <then>
+                <script language="js"><![CDATA[
+					    var payload = mc.getPayloadJSON();
+                        delete payload.recordingDetails.location.latitude;
+						mc.setPayloadJSON(payload);
+					]]>
+                </script>
+            </then>
+        </filter>
+        <filter
+                xpath="get-property('uri.var.longitude') = '' or (not(string(get-property('uri.var.longitude'))))">
+            <then>
+                <script language="js"><![CDATA[
+					    var payload = mc.getPayloadJSON();
+                        delete payload.recordingDetails.location.longitude;
+						mc.setPayloadJSON(payload);
+					]]>
+                </script>
+            </then>
+        </filter>
+        <script language="js"><![CDATA[
+            var payload = mc.getPayloadJSON();
+            var location = payload.recordingDetails.location;
+            var count=(count_obj(location))
+            function count_obj(str){
+                var i = 0;
+                for(var key in str){
+                    ++i;
+                }
+                return i;
+            }
+            if(count == 0)
+            {
+                delete payload.recordingDetails.location;
+                mc.setPayloadJSON(payload);
+            }
+			]]>
+        </script>
+        <filter
+                xpath="get-property('uri.var.recordingDate') = '' or (not(string(get-property('uri.var.recordingDate'))))">
+            <then>
+                <script language="js"><![CDATA[
+					    var payload = mc.getPayloadJSON();
+                        delete payload.recordingDetails.recordingDate;
+						mc.setPayloadJSON(payload);
+					]]>
+                </script>
+            </then>
+        </filter>
+        <script language="js"><![CDATA[
+            var payload = mc.getPayloadJSON();
+            var recordingDetails = payload.recordingDetails;
+            var count=(count_obj(recordingDetails))
+            function count_obj(str){
+                var i = 0;
+                for(var key in str){
+                    ++i;
+                }
+                return i;
+            }
+            if(count == 0)
+            {
+                delete payload.recordingDetails;
+                mc.setPayloadJSON(payload);
+            }
+			]]>
+        </script>
+
+        <call>
+            <endpoint>
+                <http method="PUT"
+                      uri-template="{uri.var.apiUrl}/videos?part={uri.var.part}{uri.var.optionalParameters}"/>
+            </endpoint>
+        </call>
+    </sequence>
+</template>

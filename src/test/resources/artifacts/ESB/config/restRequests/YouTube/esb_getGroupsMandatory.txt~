@@ -1,0 +1,4 @@
+{
+"apiUrl":"https://api.vimeo.com",
+"accessToken":"%s"
+}

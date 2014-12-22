@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy xmlns="http://ws.apache.org/ns/synapse"
+       name="VideosInsert"
+       transports="https,http"
+       statistics="disable"
+       trace="disable"
+       startOnLoad="true">
+    <target>
+        <inSequence>
+            <property name="apiUrl" expression="json-eval($.apiUrl)"/>
+            <property name="client_id" expression="json-eval($.client_id)"/>
+            <property name="client_secret" expression="json-eval($.client_secret)"/>
+            <property name="grant_type" expression="json-eval($.grant_type)"/>
+            <property name="refresh_token" expression="json-eval($.refresh_token)"/>
+            <property name="part" expression="json-eval($.part)"/>
+            <property name="autoLevels" expression="json-eval($.autoLevels)"/>
+            <property name="notifySubscribers" expression="json-eval($.notifySubscribers)"/>
+            <property name="onBehalfOfContentOwner"
+                      expression="json-eval($.onBehalfOfContentOwner)"/>
+            <property name="onBehalfOfContentOwnerChannel"
+                      expression="json-eval($.onBehalfOfContentOwnerChannel)"/>
+            <property name="stabilize" expression="json-eval($.stabilize)"/>
+            <property name="title" expression="json-eval($.title)"/>
+            <property name="description" expression="json-eval($.description)"/>
+            <property name="tags" expression="json-eval($.tags)"/>
+            <property name="categoryId" expression="json-eval($.categoryId)"/>
+            <property name="privacyStatus" expression="json-eval($.privacyStatus)"/>
+            <property name="embeddable" expression="json-eval($.embeddable)"/>
+            <property name="license" expression="json-eval($.license)"/>
+            <property name="publicStatsViewable"
+                      expression="json-eval($.publicStatsViewable)"/>
+            <property name="publishAt" expression="json-eval($.publishAt)"/>
+            <property name="locationDescription"
+                      expression="json-eval($.locationDescription)"/>
+            <property name="latitude" expression="json-eval($.latitude)"/>
+            <property name="longitude" expression="json-eval($.longitude)"/>
+            <property name="recordingDate" expression="json-eval($.recordingDate)"/>
+            <YouTube.init>
+                <apiUrl>{$ctx:apiUrl}</apiUrl>
+            </YouTube.init>
+            <YouTube.getAccessTokenFromRefreshToken>
+                <client_id>{$ctx:client_id}</client_id>
+                <client_secret>{$ctx:client_secret}</client_secret>
+                <grant_type>{$ctx:grant_type}</grant_type>
+                <refresh_token>{$ctx:refresh_token}</refresh_token>
+            </YouTube.getAccessTokenFromRefreshToken>
+            <YouTube.VideosInsert>
+                <part>{$ctx:part}</part>
+                <autoLevels>{$ctx:autoLevels}</autoLevels>
+                <notifySubscribers>{$ctx:notifySubscribers}</notifySubscribers>
+                <onBehalfOfContentOwner>{$ctx:onBehalfOfContentOwner}</onBehalfOfContentOwner>
+                <onBehalfOfContentOwnerChannel>{$ctx:onBehalfOfContentOwnerChannel}</onBehalfOfContentOwnerChannel>
+                <stabilize>{$ctx:stabilize}</stabilize>
+                <title>{$ctx:title}</title>
+                <description>{$ctx:description}</description>
+                <tags>{$ctx:tags}</tags>
+                <categoryId>{$ctx:categoryId}</categoryId>
+                <privacyStatus>{$ctx:privacyStatus}</privacyStatus>
+                <embeddable>{$ctx:embeddable}</embeddable>
+                <license>{$ctx:license}</license>
+                <publicStatsViewable>{$ctx:publicStatsViewable}</publicStatsViewable>
+                <publishAt>{$ctx:publishAt}</publishAt>
+                <locationDescription>{$ctx:locationDescription}</locationDescription>
+                <latitude>{$ctx:latitude}</latitude>
+                <longitude>{$ctx:longitude}</longitude>
+                <recordingDate>{$ctx:recordingDate}</recordingDate>
+            </YouTube.VideosInsert>
+            <respond/>
+        </inSequence>
+        <outSequence>
+            <send/>
+        </outSequence>
+    </target>
+    <description/>
+</proxy>

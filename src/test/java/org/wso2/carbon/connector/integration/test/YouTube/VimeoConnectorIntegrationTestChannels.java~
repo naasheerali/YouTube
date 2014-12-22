@@ -1,0 +1,1305 @@
+/**
+ *  Copyright (c) 2005-2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+package org.wso2.carbon.connector.integration.test.vimeo;
+
+import org.apache.axis2.context.ConfigurationContext;
+import org.json.JSONObject;
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+import org.wso2.carbon.automation.api.clients.proxy.admin.ProxyServiceAdminClient;
+import org.wso2.carbon.automation.api.clients.utils.AuthenticateStub;
+import org.wso2.carbon.automation.utils.axis2client.ConfigurationContextProvider;
+import org.wso2.carbon.connector.integration.test.common.ConnectorIntegrationUtil;
+import org.wso2.carbon.esb.ESBIntegrationTest;
+import org.wso2.carbon.mediation.library.stub.MediationLibraryAdminServiceStub;
+import org.wso2.carbon.mediation.library.stub.upload.MediationLibraryUploaderStub;
+
+import javax.activation.DataHandler;
+import java.net.URL;
+import java.util.Properties;
+
+public class VimeoConnectorIntegrationTestChannels extends ESBIntegrationTest {
+
+    private static final String CONNECTOR_NAME = "vimeo";
+
+    private MediationLibraryUploaderStub mediationLibUploadStub = null;
+
+    private MediationLibraryAdminServiceStub adminServiceStub = null;
+
+    private ProxyServiceAdminClient proxyAdmin;
+
+    private String repoLocation = null;
+
+    private String vimeoConnectorFileName = CONNECTOR_NAME + ".zip";
+
+    private Properties vimeoConnectorProperties = null;
+
+    private String pathToProxiesDirectory = null;
+
+    private String pathToRequestsDirectory = null;
+
+    private String myGroupId = null;
+
+    @BeforeClass(alwaysRun = true)
+    public void setEnvironment() throws Exception {
+
+        super.init();
+
+        ConfigurationContextProvider configurationContextProvider = ConfigurationContextProvider.getInstance();
+        ConfigurationContext cc = configurationContextProvider.getConfigurationContext();
+        mediationLibUploadStub = new MediationLibraryUploaderStub(cc, esbServer.getBackEndUrl() + "MediationLibraryUploader");
+        AuthenticateStub.authenticateStub("admin", "admin", mediationLibUploadStub);
+        adminServiceStub = new MediationLibraryAdminServiceStub(cc, esbServer.getBackEndUrl() + "MediationLibraryAdminService");
+
+        AuthenticateStub.authenticateStub("admin", "admin", adminServiceStub);
+
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            repoLocation = System.getProperty("connector_repo").replace("/", "\\");
+        } else {
+            repoLocation = System.getProperty("connector_repo").replace("/", "/");
+        }
+        proxyAdmin = new ProxyServiceAdminClient(esbServer.getBackEndUrl(), esbServer.getSessionCookie());
+
+        /* ConnectorIntegrationUtil.uploadConnector(repoLocation, mediationLibUploadStub, vimeoConnectorFileName);
+        log.info("Sleeping for " + 30000 / 1000 + " seconds while waiting for synapse import");
+        Thread.sleep(30000);
+
+        adminServiceStub.updateStatus("{org.wso2.carbon.connector}" + CONNECTOR_NAME, CONNECTOR_NAME,
+                "org.wso2.carbon.connector", "enabled");
+        */
+
+        vimeoConnectorProperties = ConnectorIntegrationUtil.getConnectorConfigProperties(CONNECTOR_NAME);
+
+        pathToProxiesDirectory = repoLocation + vimeoConnectorProperties.getProperty("proxyDirectoryRelativePath");
+        pathToRequestsDirectory = repoLocation + vimeoConnectorProperties.getProperty("requestDirectoryRelativePath");
+
+    }
+
+    @Override
+    protected void cleanup() {
+        axis2Client.destroy();
+    }
+
+//------------------------------CHANNELS---------------------------------------------------------------------------
+
+
+/*	
+        @Test(groups = { "wso2.esb" }, description = "vimeo{createChannel} integration test.")
+    public void testCreateChannelWithMandatoryParameters() throws Exception {
+    
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_createChannel.txt";
+        String methodName = "vimeo_createChannel";
+        
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory+"channels/"+ methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"),vimeoConnectorProperties.getProperty("channelName"),vimeoConnectorProperties.getProperty("channelDescription"),vimeoConnectorProperties.getProperty("channelPrivacy"));
+        
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+        
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 201);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+}
+
+   @Test(groups = { "wso2.esb" }, description = "vimeo{createChannel} integration test.")
+    public void testCreateChannelWithMandatoryParametersNegativeCase() throws Exception {
+    
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_createChannel.txt";
+        String methodName = "vimeo_createChannel";
+        
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory +"channels/"+ methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"),vimeoConnectorProperties.getProperty("channelName"),vimeoConnectorProperties.getProperty("channelDescription"),vimeoConnectorProperties.getProperty("invalidPrivacy"));
+        
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+        
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 403);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+}
+	
+*/
+/*
+ @Test(groups = { "wso2.esb" }, description = "vimeo{addVideoToChannel} integration test.")
+    public void testaddVideoToChannelWithMandatoryParameters() throws Exception {
+    
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_addVideoToChannel.txt";
+        String methodName = "vimeo_addVideoToChannel";
+        
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory +"channels/"+ methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"),vimeoConnectorProperties.getProperty("myChannel_id"),vimeoConnectorProperties.getProperty("video_id"));
+        
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+        
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 204);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+	 @Test(groups = { "wso2.esb" }, description = "vimeo{addVideoToChannel} integration test.")
+    public void testaddVideoToChannelWithMandatoryParametersVideoIdNegativeCase() throws Exception {
+    
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_addVideoToChannel.txt";
+        String methodName = "vimeo_addVideoToChannel";
+        
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory +"channels/"+ methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"),vimeoConnectorProperties.getProperty("myChannel_id"),vimeoConnectorProperties.getProperty("invalidVideo_id"));
+        
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+        
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 404);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+	 @Test(groups = { "wso2.esb" }, description = "vimeo{addVideoToChannel} integration test.")
+    public void testaddVideoToChannelWithMandatoryParametersChannelIdNegativeCase() throws Exception {
+    
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_addVideoToChannel.txt";
+        String methodName = "vimeo_addVideoToChannel";
+        
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory +"channels/"+ methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"),vimeoConnectorProperties.getProperty("channel_id"),vimeoConnectorProperties.getProperty("video_id"));
+        
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+        
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 403);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+*/
+/*
+ @Test(groups = { "wso2.esb" }, description = "vimeo{removeVideoFromChannel} integration test.")
+    public void testRemoveVideoFromChannelWithMandatoryParameters() throws Exception {
+    
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_removeVideoFromChannel.txt";
+        String methodName = "vimeo_removeVideoFromChannel";
+        
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/"+methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"),vimeoConnectorProperties.getProperty("myChannel_id"),vimeoConnectorProperties.getProperty("video_id"));
+        
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+        
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 204);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+	 @Test(groups = { "wso2.esb" }, description = "vimeo{removeVideoFromChannel} integration test.")
+    public void testRemoveVideoFromChannelWithMandatoryParametersVideoIdNegativeCase() throws Exception {
+    
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_removeVideoFromChannel.txt";
+        String methodName = "vimeo_removeVideoFromChannel";
+        
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory +"channels/"+ methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"),vimeoConnectorProperties.getProperty("myChannel_id"),vimeoConnectorProperties.getProperty("invalidVideo_id"));
+        
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+        
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 404);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+	 @Test(groups = { "wso2.esb" }, description = "vimeo{removeVideoFromChannel} integration test.")
+    public void testRemoveVideoFromChannelWithMandatoryParametersChannelIdNegativeCase() throws Exception {
+    
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_removeVideoFromChannel.txt";
+        String methodName = "vimeo_removeVideoFromChannel";
+        
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory +"channels/"+ methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"),vimeoConnectorProperties.getProperty("channel_id"),vimeoConnectorProperties.getProperty("video_id"));
+        
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+        
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 403);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }*/
+/*
+
+
+ @Test(groups = { "wso2.esb" }, description = "vimeo{editChannel} integration test.")
+	 public void testEditChannelWithMandatoryParameters() throws Exception {
+    
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_editChannel.txt";
+        String methodName = "vimeo_editChannel";
+        
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory +"channels/"+ methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"),vimeoConnectorProperties.getProperty("myChannel_id"),vimeoConnectorProperties.getProperty("editChannelName"),vimeoConnectorProperties.getProperty("channelDescription"),vimeoConnectorProperties.getProperty("channelPrivacy"));
+        
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+        
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 204);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+@Test(groups = { "wso2.esb" }, description = "vimeo{editChannel} integration test.")
+	 public void testEditChannelWithMandatoryParametersNegativeCase() throws Exception {
+    
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_editChannel.txt";
+        String methodName = "vimeo_editChannel";
+        
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory +"channels/"+ methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"),vimeoConnectorProperties.getProperty("invalidChannel_id"),vimeoConnectorProperties.getProperty("editChannelName"),vimeoConnectorProperties.getProperty("channelDescription"),vimeoConnectorProperties.getProperty("channelPrivacy"));
+        
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+        
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 404);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+*/
+   /*@Test(groups = { "wso2.esb" }, description = "vimeo{deleteChannel} integration test.")
+    public void testDeleteChannelWithMandatoryParameters() throws Exception {
+    
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_deleteChannel.txt";
+        String methodName = "vimeo_deleteChannel";
+        
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/"+methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"),vimeoConnectorProperties.getProperty("myChannel_id"));
+        
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+        
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 204);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+	 @Test(groups = { "wso2.esb" }, description = "vimeo{deleteChannel} integration test.")
+    public void testDeleteChannelWithMandatoryParametersNegativeCase() throws Exception {
+    
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_deleteChannel.txt";
+        String methodName = "vimeo_deleteChannel";
+        
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/"+methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"),vimeoConnectorProperties.getProperty("invalidChannel_id"));
+        
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+        
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 404);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+*/
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getChannel} integration test.")
+    public void testGetChannelWithMandatoryParameters() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getChannel.txt";
+        String methodName = "vimeo_getChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 200);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getChannel} integration test.")
+    public void testGetChannelWithMandatoryParametersNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getChannel.txt";
+        String methodName = "vimeo_getChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("invalidChannel_id"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 404);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getChannels} integration test.")
+    public void testGetChannelsWithMandatoryParameters() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getChannelsMandatory.txt";
+        String methodName = "vimeo_getChannels";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getChannels} integration test.")
+    public void testgetChannelsWithOptionalParameters() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getChannelsOptional.txt";
+        String methodName = "vimeo_getChannels";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("page"), vimeoConnectorProperties.getProperty("per_page"), vimeoConnectorProperties.getProperty("query"), vimeoConnectorProperties.getProperty("channelSort"), vimeoConnectorProperties.getProperty("direction"), vimeoConnectorProperties.getProperty("filter"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getChannels} integration test.")
+    public void testgetChannelsWithPageOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getChannelsOptionalPage.txt";
+        String methodName = "vimeo_getChannels";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("page"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getChannels} integration test with negative parameters.")
+    public void testgetChannelsWithPageOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getChannelsOptionalPage.txt";
+        String methodName = "vimeo_getChannels";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("invalidPage"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 400);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getChannels} integration test.")
+    public void testgetChannelsWithPerPageOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getChannelsOptionalPerPage.txt";
+        String methodName = "vimeo_getChannels";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("per_page"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getChannels} integration test with negative parameters.")
+    public void testgetChannelsWithPerPageOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getChannelsOptionalPerPage.txt";
+        String methodName = "vimeo_getChannels";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("invalidPer_page"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 500);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getChannels} integration test.")
+    public void testgetChannelsWithQueryOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getChannelsOptionalQuery.txt";
+        String methodName = "vimeo_getChannels";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("query"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getChannels} integration test with negative parameters.")
+    public void testgetChannelsWithQueryOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getChannelsOptionalQuery.txt";
+        String methodName = "vimeo_getChannels";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("invalidQuery"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 200);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getChannels} integration test.")
+    public void testgetChannelsWithSortOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getChannelsOptionalSort.txt";
+        String methodName = "vimeo_getChannels";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channelSort"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getChannels} integration test with negative parameters.")
+    public void testgetChannelsWithSortOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getChannelsOptionalSort.txt";
+        String methodName = "vimeo_getChannels";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("invalidSort"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 400);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getChannels} integration test.")
+    public void testgetChannelsWithDirectionOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getChannelsOptionalDirection.txt";
+        String methodName = "vimeo_getChannels";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("direction"));
+
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getChannels} integration test with negative parameters.")
+    public void testgetChannelsWithDirectionOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getChannelsOptionalDirection.txt";
+        String methodName = "vimeo_getChannels";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("invalidDirection"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 400);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getChannels} integration test.")
+    public void testgetChannelsWithFilterOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getChannelsOptionalFilter.txt";
+        String methodName = "vimeo_getChannels";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("filter"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getChannels} integration test with negative parameters.")
+    public void testgetChannelsWithFilterOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getChannelsOptionalFilter.txt";
+        String methodName = "vimeo_getChannels";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("invalidFilter"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 200);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getUsersRelatedToChannel} integration test.")
+    public void testGetUsersRelatedToChannelWithMandatoryParameters() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getUsersRelatedToChannelMandatory.txt";
+        String methodName = "vimeo_getUsersRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getUsersRelatedToChannel} integration test.")
+    public void testgetUsersRelatedToChannelWithOptionalParameters() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getUsersRelatedToChannelOptional.txt";
+        String methodName = "vimeo_getUsersRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("page"), vimeoConnectorProperties.getProperty("per_page"), vimeoConnectorProperties.getProperty("query"), vimeoConnectorProperties.getProperty("channelSort"), vimeoConnectorProperties.getProperty("direction"), vimeoConnectorProperties.getProperty("channel_filter"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 200);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getUsersRelatedToChannel} integration test.")
+    public void testgetUsersRelatedToChannelWithPageOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getUsersRelatedToChannelOptionalPage.txt";
+        String methodName = "vimeo_getUsersRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("page"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getUsersRelatedToChannel} integration test with negative parameters.")
+    public void testgetUsersRelatedToChannelWithPageOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getUsersRelatedToChannelOptionalPage.txt";
+        String methodName = "vimeo_getUsersRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("invalidPage"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 400);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getUsersRelatedToChannel} integration test.")
+    public void testgetUsersRelatedToChannelWithPerPageOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getUsersRelatedToChannelOptionalPerPage.txt";
+        String methodName = "vimeo_getUsersRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("per_page"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getUsersRelatedToChannel} integration test with negative parameters.")
+    public void testgetUsersRelatedToChannelWithPerPageOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getUsersRelatedToChannelOptionalPerPage.txt";
+        String methodName = "vimeo_getUsersRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("invalidPer_page"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 500);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getUsersRelatedToChannel} integration test.")
+    public void testgetUsersRelatedToChannelWithQueryOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getUsersRelatedToChannelOptionalQuery.txt";
+        String methodName = "vimeo_getUsersRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("query"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 400);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getUsersRelatedToChannel} integration test with negative parameters.")
+    public void testgetUsersRelatedToChannelWithQueryOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getUsersRelatedToChannelOptionalQuery.txt";
+        String methodName = "vimeo_getUsersRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("invalidQuery"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 400);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getUsersRelatedToChannel} integration test.")
+    public void testgetUsersRelatedToChannelWithSortOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getUsersRelatedToChannelOptionalSort.txt";
+        String methodName = "vimeo_getUsersRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("channelSort"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getUsersRelatedToChannel} integration test with negative parameters.")
+    public void testgetUsersRelatedToChannelWithSortOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getUsersRelatedToChannelOptionalSort.txt";
+        String methodName = "vimeo_getUsersRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("invalidSort"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 400);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getUsersRelatedToChannel} integration test.")
+    public void testgetUsersRelatedToChannelWithDirectionOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getUsersRelatedToChannelOptionalDirection.txt";
+        String methodName = "vimeo_getUsersRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("direction"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getUsersRelatedToChannel} integration test with negative parameters.")
+    public void testgetUsersRelatedToChannelWithDirectionOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getUsersRelatedToChannelOptionalDirection.txt";
+        String methodName = "vimeo_getUsersRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("invalidDirection"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 400);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getUsersRelatedToChannel} integration test.")
+    public void testgetUsersRelatedToChannelWithFilterOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getUsersRelatedToChannelOptionalFilter.txt";
+        String methodName = "vimeo_getUsersRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("filter"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getUsersRelatedToChannel} integration test with negative parameters.")
+    public void testgetUsersRelatedToChannelWithFilterOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getUsersRelatedToChannelOptionalFilter.txt";
+        String methodName = "vimeo_getUsersRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("invalidFilter"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 200);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getVideosRelatedToChannel} integration test.")
+    public void testGetVideosRelatedToChannelWithMandatoryParameters() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getVideosRelatedToChannelMandatory.txt";
+        String methodName = "vimeo_getVideosRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getVideosRelatedToChannel} integration test.")
+    public void testGetVideosRelatedToChannelWithOptionalParameters() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getVideosRelatedToChannelOptional.txt";
+        String methodName = "vimeo_getVideosRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("page"), vimeoConnectorProperties.getProperty("per_page"), vimeoConnectorProperties.getProperty("query"), vimeoConnectorProperties.getProperty("channelSort"), vimeoConnectorProperties.getProperty("direction"), vimeoConnectorProperties.getProperty("filter"), vimeoConnectorProperties.getProperty("filter_embeddable"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getVideosRelatedToChannel} integration test.")
+    public void testGetVideosInGroupWithPageOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getVideosRelatedToChannelOptionalPage.txt";
+        String methodName = "vimeo_getVideosRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("page"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertEquals(vimeoConnectorProperties.getProperty("page"), jsonObject.getString("page"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getVideosRelatedToChannel} integration test with negative parameters.")
+    public void testGetVideosRelatedToChannelWithPageOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getVideosRelatedToChannelOptionalPage.txt";
+        String methodName = "vimeo_getVideosRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("invalidPage"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 400);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getVideosRelatedToChannel} integration test.")
+    public void testGetVideosRelatedToChannelWithPerPageOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getVideosRelatedToChannelOptionalPerPage.txt";
+        String methodName = "vimeo_getVideosRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("per_page"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertEquals(vimeoConnectorProperties.getProperty("per_page"), jsonObject.getString("per_page"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getVideosRelatedToChannel} integration test with negative parameters.")
+    public void testGetVideosRelatedToChannelWithPerPageOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getVideosRelatedToChannelOptionalPerPage.txt";
+        String methodName = "vimeo_getVideosRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("invalidPer_page"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 500);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getVideosRelatedToChannel} integration test.")
+    public void testGetVideosRelatedToChannelWithQueryOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getVideosRelatedToChannelOptionalQuery.txt";
+        String methodName = "vimeo_getVideosRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("query"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getVideosRelatedToChannel} integration test with negative parameters.")
+    public void testGetVideosRelatedToChannelWithQueryOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getVideosRelatedToChannelOptionalQuery.txt";
+        String methodName = "vimeo_getVideosRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("invalidQuery"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 200);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getVideosRelatedToChannel} integration test.")
+    public void testGetVideosRelatedToChannelWithSortOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getVideosRelatedToChannelOptionalSort.txt";
+        String methodName = "vimeo_getVideosRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("channelSort"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getVideosRelatedToChannel} integration test with negative parameters.")
+    public void testGetVideosRelatedToChannelWithSortOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getVideosRelatedToChannelOptionalSort.txt";
+        String methodName = "vimeo_getVideosRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("invalidSort"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 400);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getVideosRelatedToChannel} integration test.")
+    public void testGetVideosRelatedToChannelWithDirectionOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getVideosRelatedToChannelOptionalDirection.txt";
+        String methodName = "vimeo_getVideosRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("direction"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getVideosRelatedToChannel} integration test with negative parameters.")
+    public void testGetVideosRelatedToChannelWithDirectionOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getVideosRelatedToChannelOptionalDirection.txt";
+        String methodName = "vimeo_getVideosRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("invalidDirection"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 400);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getVideosRelatedToChannel} integration test.")
+    public void testGetVideosRelatedToChannelWithFilterOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getVideosRelatedToChannelOptionalFilter.txt";
+        String methodName = "vimeo_getVideosRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("groupUserFilter"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getVideosRelatedToChannel} integration test with negative parameters.")
+    public void testGetVideosRelatedToChannelWithFilterOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getVideosRelatedToChannelOptionalFilter.txt";
+        String methodName = "vimeo_getVideosRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("invalidFilter"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 200);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getVideosRelatedToChannel} integration test.")
+    public void testGetVideosRelatedToChannelWithFilterEmbeddableOptionalParameter() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getVideosRelatedToChannelOptionalFilterEmbeddable.txt";
+        String methodName = "vimeo_getVideosRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("groupUserFilter"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            JSONObject jsonObject = ConnectorIntegrationUtil.sendRequest(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(jsonObject.has("total"));
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+
+        }
+    }
+
+    @Test(groups = {"wso2.esb"}, description = "vimeo{getVideosRelatedToChannel} integration test with negative parameters.")
+    public void testGetVideosRelatedToChannelWithFilterEmbeddableOptionalParameterNegativeCase() throws Exception {
+
+        String jsonRequestFilePath = pathToRequestsDirectory + "channels/esb_getVideosRelatedToChannelOptionalFilterEmbeddable.txt";
+        String methodName = "vimeo_getVideosRelatedToChannel";
+
+        final String jsonString = ConnectorIntegrationUtil.getFileContent(jsonRequestFilePath);
+        final String proxyFilePath = "file:///" + pathToProxiesDirectory + "channels/" + methodName + ".xml";
+        String modifiedJsonString = String.format(jsonString, vimeoConnectorProperties.getProperty("accessToken"), vimeoConnectorProperties.getProperty("channel_id"), vimeoConnectorProperties.getProperty("invalidFilter"));
+
+        proxyAdmin.addProxyService(new DataHandler(new URL(proxyFilePath)));
+
+        try {
+            int responseHeader = ConnectorIntegrationUtil.sendRequestToRetriveHeaders(getProxyServiceURL(methodName), modifiedJsonString);
+            Assert.assertTrue(responseHeader == 200);
+        } finally {
+            proxyAdmin.deleteProxy(methodName);
+        }
+    }
+
+}
+
+
+
